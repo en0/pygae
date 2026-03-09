@@ -1,0 +1,39 @@
+[project]
+name = "pygae"
+version = "0.1.0"
+description = "A pygame engine focused on deterministic simulation processing and easy-to-understand game-object lifecycle."
+readme = "README.md"
+authors = [
+    { name = "Ian Laird", email = "irlaird@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = ["pygame>=2.6.1", "pyioc3>=1.6.3"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "pytest-watch>=4.2.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.10.8,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
+
+[tool.mypy]
+# Allows Type[T] to refer to abstract classes, which is not otherwise supported.
+# See https://github.com/python/mypy/issues/4717
+disable_error_code = ["type-abstract"]
