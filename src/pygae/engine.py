@@ -1,7 +1,7 @@
-from sys import stderr
-from typing import override
 import pygame
 
+from sys import stderr
+from typing import override
 from abc import ABC, abstractmethod
 from collections import deque
 from pygame.event import Event
@@ -83,11 +83,14 @@ class GameEngine(HelperMixin, ABC):
     MAX_FRAMERATE: int = 144
     MAX_FRAME_TIME: float = 0.25
 
-    def __init__(self, service_scan_path: list[str] | None = None):
+    def __init__(self, *, service_scan_path: list[str] | None = None, services: dict[type, type] = None):
         modules: list[str] = ["pygae.service"]
         if service_scan_path:
             modules.extend(service_scan_path)
-        self.__service: Container | None = AutoWireContainerBuilder(modules).build()
+        srvloc_ioc = AutoWireContainerBuilder(modules)
+        for anno, impl in (services or {}).items():
+            srvloc_ioc.bind(anno, impl, "SINGLETON")
+        self.__service: Container | None = srvloc_ioc.build()
         self.__subscriptions: list[SubscriptionId] = list()
         self.__event_handlers: dict[EventId, list[EventHandler]] = dict()
         self._is_running: bool = False
@@ -163,23 +166,6 @@ class GameEngine(HelperMixin, ABC):
     def _render(self, surface: pygame.Surface, alpha: float) -> None:
         self._scene.render(surface, alpha)
         pygame.display.flip()
-
-    def set_scene(self, scene: IGameObject) -> None:
-        """
-        Queue a new scene to become the active scene.
-
-        This method delegates to the engine's scene manager. The scene
-        transition does not happen immediately; it will be processed
-        on the next call to the engine's event loop.
-
-        Args:
-            scene (IGameObject): The scene object to set as active.
-
-        Example:
-            title_scene = TitleScene()
-            game.set_scene(title_scene)
-        """
-        self._scene.set_scene(scene)
 
     def quit(self) -> None:
         """
