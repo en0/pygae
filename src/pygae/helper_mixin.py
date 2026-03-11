@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-from pygame import Vector2
+from pygame import Vector2, mouse
 from pygae.event import IGameObject
 from pygae.value_object.input_binding import (
     AXIS_MOUSE_X,
@@ -316,6 +316,18 @@ class HelperMixin(ABC):
         """
         input = self.get_service(IInputService)
         return input.get_vector(action_x, action_y)
+
+    def hide_mouse(self) -> None:
+        """
+        Hide the mouse.
+        """
+        _ = mouse.set_visible(False)
+
+    def show_mouse(self) -> None:
+        """
+        Unhide the mouse.
+        """
+        _ = mouse.set_visible(True)
 
     @property
     @abstractmethod
