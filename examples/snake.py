@@ -1,9 +1,19 @@
 from collections import deque
 from random import randint
 from typing import NamedTuple, final, override
-from pygae import GameEngine, GameObject, IGameObject
-from pygame import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, Rect, Surface, Vector2, draw
+from pygae import GameEngine, GameObject, IGameObject, IInputService
+from pygame import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w, Rect, Surface, Vector2, draw
 from pygame.font import SysFont
+
+from pygae.value_object import InputBinding
+from pygae.value_object.input_binding import DEVICE_KEYBOARD, TYPE_BUTTON
+
+
+T_FACING = int
+LEFT: T_FACING = 0
+UP: T_FACING = 1
+RIGHT: T_FACING = 2
+DOWN: T_FACING = 3
 
 
 @final
@@ -18,12 +28,13 @@ class PlayScene(GameObject):
 
     SNAKE_COLOR = "#234111"
     FRUIT_COLOR = "#431111"
+    FRUTE_SPAWN_TICK = 20
 
     def __init__(self) -> None:
         super().__init__()
         self.tile_x: int
         self.tile_y: int
-        self.facing: int
+        self.facing: T_FACING
         self.world_boundary = Rect(0, 0, 50, 35)
         self.prev_snake: list[tuple[float, float]]
         self.snake: deque[tuple[int, int]]
@@ -39,31 +50,33 @@ class PlayScene(GameObject):
         self.tile_y = boundary.height // self.world_boundary.height
 
         # Reset the game
+        cx, cy = self.world_boundary.center
         self.fruit = set()
         self.prev_snake = []
         self.snake = deque(maxlen=5)
-        self.snake.append(self.world_boundary.center)
+        self.snake.append((cx, cy))
         self.facing = 0
 
     def _world2screen(self, x: int = 0, y: int = 0) -> tuple[float, float]:
         # Convert from the world tile to the screen pixel
         return x*self.tile_x, y*self.tile_y
 
-    def _spawn_fruit(self, attempt: int = 0):
+    def _spawn_fruit(self):
         # We attempt to spawn fruit 10 times.
-        # and we only allow 3 total fruites at any moment
-        if attempt > 10 or len(self.fruit) > 2: return
+        # and we only allow 3 total fruits at any moment
+        if len(self.fruit) > 2: return
+        for _ in range(10):
 
-        # Pick a random fruit location
-        x = randint(0, self.world_boundary.width - 1)
-        y = randint(0, self.world_boundary.height - 1)
+            # Pick a random spawn location
+            pos = (
+                randint(0, self.world_boundary.width - 1),
+                randint(0, self.world_boundary.height - 1)
+            )
 
-        # Make sure it's a vaid spot.
-        # If not, make another attempt
-        if (x, y) in self.snake or (x, y) in self.fruit:
-            self._spawn_fruit(attempt+1)
-        else:
-            self.fruit.add((x, y))
+            # Make sure it's a valid spot.
+            if pos not in set(self.snake) and pos not in self.fruit:
+                self.fruit.add(pos)
+                break
 
     def game_over(self):
         self.set_scene(TitleScene())
@@ -75,40 +88,50 @@ class PlayScene(GameObject):
         self.prev_snake = [self._world2screen(x=x, y=y) for x,y in self.snake]
 
         # Attempt to spawn new fruit
-        self.fruit_spawn_cooldown = (self.fruit_spawn_cooldown + 1) % 20
+        self.fruit_spawn_cooldown = (self.fruit_spawn_cooldown + 1) % self.FRUTE_SPAWN_TICK
         if self.fruit_spawn_cooldown == 0:
             self._spawn_fruit()
 
         # Find the next snake position considering inputs
         x, y = self.snake[0]
-        if self.facing in (0, 2) and self.input_pressed("UP"): self.facing = 1
-        elif self.facing in (0, 2) and self.input_pressed("DOWN"): self.facing = 3
-        elif self.facing in (1, 3) and self.input_pressed("LEFT"): self.facing = 0
-        elif self.facing in (1, 3) and self.input_pressed("RIGHT"): self.facing = 2
-        if self.facing == 0: x -= 1
-        elif self.facing == 1: y -= 1
-        elif self.facing == 2: x += 1
-        elif self.facing == 3: y += 1
+        if self.facing in (LEFT, RIGHT) and self.input_pressed("UP"):
+            self.facing = UP
+        elif self.facing in (LEFT, RIGHT) and self.input_pressed("DOWN"):
+            self.facing = DOWN
+        elif self.facing in (UP, DOWN) and self.input_pressed("LEFT"):
+            self.facing = LEFT
+        elif self.facing in (UP, DOWN) and self.input_pressed("RIGHT"):
+            self.facing = RIGHT
+
+        # Move head of snake forward
+        if self.facing == LEFT: x -= 1
+        elif self.facing == UP: y -= 1
+        elif self.facing == RIGHT: x += 1
+        elif self.facing == DOWN: y += 1
 
         # Check for food collisions
-        # If so, grow the ring-buffer by 1 item to allow for new snake segment
-        # And remove the fruit from the list of fruits
         if (x, y) in self.fruit:
-            self.snake = deque(self.snake.copy(), maxlen=(self.snake.maxlen or 1) + 1)
+            self.snake = deque(self.snake, maxlen=(self.snake.maxlen or 1) + 1)
             self.fruit.remove((x, y))
+        elif len(self.snake) == self.snake.maxlen:
+            # Pop off the tail to fix the tail collsion check
+            _ = self.snake.pop()
 
-        # Check for self-collsion
+        # Check for self-collsion and out-of-bounds
         if (x, y) in self.snake:
+            self.game_over()
+        elif x < 0:
+            self.game_over()
+        elif x >= self.world_boundary.width:
+            self.game_over()
+        elif y < 0:
+            self.game_over()
+        elif y >= self.world_boundary.height:
             self.game_over()
 
         # Set the next snake position
-        self.snake.appendleft((x, y))
-
-        # Check for boundary collisions
-        if x < 0: self.game_over()
-        if x >= self.world_boundary.width: self.game_over()
-        if y < 0: self.game_over()
-        if y >= self.world_boundary.height: self.game_over()
+        else:
+            self.snake.appendleft((x, y))
 
     @override
     def _post_render(self, surface: Surface, alpha: float) -> None:
@@ -143,7 +166,6 @@ class TitleScene(GameObject):
         self.title_sprite_position: tuple[float, float]
         self.prompt_sprite: Surface
         self.prompt_sprite_position: tuple[float, float]
-        self.play_scene: IGameObject = PlayScene()
         self.blink: int = 0
 
     @override
@@ -169,7 +191,7 @@ class TitleScene(GameObject):
     @override
     def _post_fixed_update(self, delta: float) -> None:
         if self.input_pressed("PLAY"):
-            self.set_scene(self.play_scene)
+            self.set_scene(PlayScene())
 
     @override
     def _post_render(self, surface: Surface, alpha: float) -> None:
@@ -195,11 +217,25 @@ class SnakeGame(GameEngine):
         self.set_scene(TitleScene())
 
         # Bind all the keys
-        self.bind_keyboard_button("UP", K_UP)
-        self.bind_keyboard_button("DOWN", K_DOWN)
-        self.bind_keyboard_button("LEFT", K_LEFT)
-        self.bind_keyboard_button("RIGHT", K_RIGHT)
-        self.bind_keyboard_button("PLAY", K_RETURN)
+        self.get_service(IInputService).set_map({
+            "PLAY": InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_RETURN),
+            "UP": [
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_w),
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_UP),
+            ],
+            "DOWN": [
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_s),
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_DOWN),
+            ],
+            "LEFT": [
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_a),
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_LEFT),
+            ],
+            "RIGHT": [
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_d),
+                InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_RIGHT),
+            ],
+        })
 
 
 if __name__ == "__main__":
