@@ -14,7 +14,6 @@ from pygae.helper_mixin import HelperMixin
 from pygae.typing import (
     EventHandler,
     EventId,
-    IGameObject,
     IInputService,
     IMessageBus,
     ISceneManager,
@@ -83,7 +82,12 @@ class GameEngine(HelperMixin, ABC):
     MAX_FRAMERATE: int = 144
     MAX_FRAME_TIME: float = 0.25
 
-    def __init__(self, *, service_scan_path: list[str] | None = None, services: dict[type, type] = None):
+    def __init__(
+        self,
+        *,
+        service_scan_path: list[str] | None = None,
+        services: dict[type, type] | None = None,
+    ):
         modules: list[str] = ["pygae.service"]
         if service_scan_path:
             modules.extend(service_scan_path)

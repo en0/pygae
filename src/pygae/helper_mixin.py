@@ -1,17 +1,35 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar
+
+from pygame import Vector2
 from pygae.event import IGameObject
-from pygae.value_object.input_binding import AXIS_MOUSE_X, AXIS_MOUSE_Y, DEVICE_KEYBOARD, DEVICE_MOUSE, TYPE_AXIS, TYPE_BUTTON
+from pygae.value_object.input_binding import (
+    AXIS_MOUSE_X,
+    AXIS_MOUSE_Y,
+    AXIS_MOUSE_DX,
+    AXIS_MOUSE_DY,
+    DEVICE_KEYBOARD,
+    DEVICE_MOUSE,
+    TYPE_AXIS,
+    TYPE_BUTTON,
+)
 from pygame.event import Event
 from pyioc3.interface import Container
-from pygae.typing import EventHandler, EventId, IMessageBus, InputBinding, SubscriptionId, IInputService, ISceneManager
+from pygae.typing import (
+    EventHandler,
+    EventId,
+    IMessageBus,
+    InputBinding,
+    SubscriptionId,
+    IInputService,
+    ISceneManager,
+)
 
 
 SERVICE_T = TypeVar("SERVICE_T", bound=object)
 
 
 class HelperMixin(ABC):
-
     def get_service(self, interface: type[SERVICE_T]) -> SERVICE_T:
         """
         Retrieve a service instance from the object's service locator.
@@ -102,7 +120,6 @@ class HelperMixin(ABC):
         input = self.get_service(IInputService)
         input.disable(action)
 
-
     def enable_action(self, action: str) -> None:
         """
         Enable an input action.
@@ -118,7 +135,6 @@ class HelperMixin(ABC):
         """
         input = self.get_service(IInputService)
         input.enable(action)
-
 
     def bind_keyboard_button(self, action: str, key: int) -> None:
         """
@@ -138,7 +154,6 @@ class HelperMixin(ABC):
         binding = InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=key)
         input.bind(action, binding)
 
-
     def bind_mouse_button(self, action: str, key: int) -> None:
         """
         Bind a mouse button to an input action.
@@ -156,7 +171,6 @@ class HelperMixin(ABC):
         input = self.get_service(IInputService)
         binding = InputBinding(TYPE_BUTTON, DEVICE_MOUSE, id=key)
         input.bind(action, binding)
-
 
     def bind_mouse_xy(self, x_action: str, y_action: str) -> None:
         """
@@ -178,7 +192,6 @@ class HelperMixin(ABC):
         input.bind(x_action, x_binding)
         input.bind(y_action, y_binding)
 
-
     def bind_mouse_dxy(self, dx_action: str, dy_action: str) -> None:
         """
         Bind mouse movement delta axes to input actions.
@@ -198,7 +211,6 @@ class HelperMixin(ABC):
         dy_binding = InputBinding(TYPE_AXIS, DEVICE_MOUSE, id=AXIS_MOUSE_DY)
         input.bind(dx_action, dx_binding)
         input.bind(dy_action, dy_binding)
-
 
     def unbind_action(self, action: str) -> None:
         """
@@ -243,7 +255,6 @@ class HelperMixin(ABC):
         input = self.get_service(IInputService)
         return input.pressed(action)
 
-
     def input_released(self, action: str) -> int:
         """
         Get the number of times an action was released during the current frame.
@@ -283,7 +294,6 @@ class HelperMixin(ABC):
         """
         input = self.get_service(IInputService)
         return input.held(action)
-
 
     def get_input_vector(self, action_x: str, action_y: str) -> Vector2:
         """

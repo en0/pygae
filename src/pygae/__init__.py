@@ -5,7 +5,7 @@ from .typing import (
     IMessageBus,
     ISceneManager,
     EventId,
-    EventFilter
+    EventFilter,
 )
 
 from .game_object import GameObject
@@ -20,4 +20,3 @@ __all__ = [
     "EventId",
     "EventFilter",
 ]
-
