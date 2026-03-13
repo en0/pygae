@@ -1,8 +1,8 @@
 from collections import deque
 from random import randint
 from typing import NamedTuple, final, override
-from pygae import GameEngine, GameObject, IGameObject, IInputService
-from pygame import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w, Rect, Surface, Vector2, draw, mouse
+from pygae import GameEngine, GameObject, IInputService
+from pygame import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_p, K_s, K_w, Rect, Surface, Vector2, draw
 from pygame.font import SysFont
 
 from pygae.value_object import InputBinding
@@ -26,6 +26,7 @@ class Config(NamedTuple):
 @final
 class PlayScene(GameObject):
 
+    PAUSE_TEXT_COLOR = "#232243"
     BACKGROUND = "#0f0f0f"
     SNAKE_COLOR = "#234111"
     FRUIT_COLOR = "#431111"
@@ -37,10 +38,13 @@ class PlayScene(GameObject):
         self.tile_x: float
         self.tile_y: float
         self.facing: T_FACING
+        self.pause_sprite: Surface
+        self.pause_sprite_position: tuple[float, float]
         self.prev_snake: list[tuple[float, float]]
         self.snake: deque[tuple[float, float]]
         self.fruit: set[tuple[float, float]]
         self.fruit_spawn_cooldown = -1
+        self.is_paused: bool = False
 
     @override
     def on_load(self) -> None:
@@ -57,6 +61,12 @@ class PlayScene(GameObject):
         self.snake = deque(maxlen=5)
         self.snake.append((cx, cy))
         self.facing = LEFT
+
+        # Render paused text
+        self.pause_sprite = SysFont("arial", 100).render("PAUSE", True, self.PAUSE_TEXT_COLOR)
+        sprite_rect = self.pause_sprite.get_bounding_rect()
+        sprite_rect.center = boundary.center
+        self.pause_sprite_position = sprite_rect.topleft
 
     def _world2screen(self, x: float = 0, y: float = 0) -> tuple[float, float]:
         # Convert from the world tile to the screen pixel
@@ -85,8 +95,14 @@ class PlayScene(GameObject):
     @override
     def _post_fixed_update(self, delta: float) -> None:
 
+        if self.input_pressed("PAUSE"):
+            self.is_paused = not self.is_paused
+
         # Store previous location for render interpolation
         self.prev_snake = [self._world2screen(x=x, y=y) for x,y in self.snake]
+
+        if self.is_paused:
+            return
 
         # Attempt to spawn new fruit
         self.fruit_spawn_cooldown = (self.fruit_spawn_cooldown + 1) % self.FRUIT_SPAWN_TICK
@@ -143,6 +159,9 @@ class PlayScene(GameObject):
             render_pos = (sx+2, sy+2, self.tile_x-4, self.tile_y-4)
             _ = draw.rect(surface, self.FRUIT_COLOR, render_pos)
 
+        if self.is_paused:
+            _ = surface.blit(self.pause_sprite, self.pause_sprite_position)
+
 
 @final
 class TitleScene(GameObject):
@@ -163,7 +182,7 @@ class TitleScene(GameObject):
     def on_load(self) -> None:
         boundary = self.get_service(Config).boundary
 
-        # Render title text text
+        # Render title text
         title_font = SysFont("arial", 100)
         self.title_sprite = title_font.render(self.TITLE, True, self.TITLE_COLOR)
         sprite_rect = self.title_sprite.get_bounding_rect()
@@ -211,6 +230,7 @@ class SnakeGame(GameEngine):
         # Bind all the keys
         self.get_service(IInputService).set_map({
             "PLAY": InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_RETURN),
+            "PAUSE": InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_p),
             "UP": [
                 InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_w),
                 InputBinding(TYPE_BUTTON, DEVICE_KEYBOARD, id=K_UP),
