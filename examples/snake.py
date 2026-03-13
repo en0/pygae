@@ -2,18 +2,19 @@ from collections import deque
 from random import randint
 from typing import NamedTuple, final, override
 from pygae import GameEngine, GameObject, IInputService
-from pygame import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_p, K_s, K_w, Rect, Surface, Vector2, draw
+from pygae.math import Vec2
+from pygame import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_p, K_s, K_w, Rect, Surface, draw
 from pygame.font import SysFont
 
 from pygae.value_object import InputBinding
 from pygae.value_object.input_binding import DEVICE_KEYBOARD, TYPE_BUTTON
 
 
-T_FACING = Vector2
-LEFT: T_FACING = Vector2(-1, 0)
-UP: T_FACING = Vector2(0, -1)
-RIGHT: T_FACING = Vector2(1, 0)
-DOWN: T_FACING = Vector2(0, 1)
+T_FACING = Vec2
+LEFT: T_FACING = Vec2(-1, 0)
+UP: T_FACING = Vec2(0, -1)
+RIGHT: T_FACING = Vec2(1, 0)
+DOWN: T_FACING = Vec2(0, 1)
 
 
 @final
@@ -55,11 +56,11 @@ class PlayScene(GameObject):
         self.tile_y = boundary.height / self.WORLD.height
 
         # Reset the game
-        cx, cy = self.WORLD.center
+        snake_pos = Vec2.as_vec2(self.WORLD.center)
         self.fruit = set()
         self.prev_snake = []
         self.snake = deque(maxlen=5)
-        self.snake.append((cx, cy))
+        self.snake.append(snake_pos)
         self.facing = LEFT
 
         # Render paused text
@@ -147,7 +148,7 @@ class PlayScene(GameObject):
         # Draw Snake
         for (wx, wy), (lx, ly) in zip(self.snake, self.prev_snake):
             sx, sy = self._world2screen(wx, wy)
-            lsx, lsy = Vector2(lx, ly).lerp((sx, sy), alpha)
+            lsx, lsy = Vec2(lx, ly).lerp((sx, sy), alpha)
             # Make each tile just slightly bigger to avoid lines
             render_pos = (lsx-1, lsy-1, self.tile_x+2, self.tile_y+2)
             _ = draw.rect(surface, self.SNAKE_COLOR, render_pos)

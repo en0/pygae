@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from pygame import Surface, Vector2
+from pygame import Surface
 from pygame.event import Event
 from pyioc3.interface import Container
 from typing import Callable
@@ -432,7 +432,7 @@ class IInputService(ABC):
         ...
 
     @abstractmethod
-    def get_vector(self, x_action: str, y_action: str) -> Vector2:
+    def get_vector(self, x_action: str, y_action: str) -> tuple[float, float]:
         """
         Returns a 2D vector combining two actions.
 
@@ -443,7 +443,7 @@ class IInputService(ABC):
             y_action (str): Action name for the vertical axis.
 
         Returns:
-            Vector2: Combined (x, y) value.
+            tuple[float, float]: Combined (x, y) value.
         """
         ...
 

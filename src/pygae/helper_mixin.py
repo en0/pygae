@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-from pygame import Vector2, mouse
-from pygae.event import IGameObject
+from pygame import mouse
+from pygae.typing import IGameObject
 from pygae.value_object.input_binding import (
     AXIS_MOUSE_X,
     AXIS_MOUSE_Y,
@@ -295,7 +295,7 @@ class HelperMixin(ABC):
         input = self.get_service(IInputService)
         return input.held(action)
 
-    def get_input_vector(self, action_x: str, action_y: str) -> Vector2:
+    def get_input_vector(self, action_x: str, action_y: str) -> tuple[float, float]:
         """
         Retrieve a 2D vector composed of two input actions.
 
@@ -308,7 +308,7 @@ class HelperMixin(ABC):
             action_y (str): The action providing the Y component.
 
         Returns:
-            Vector2: A vector containing the combined input values.
+            tuple[float, float]: A vector containing the combined input values.
 
         Example:
             movement = game.get_input_vector("move_x", "move_y")

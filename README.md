@@ -53,13 +53,13 @@ uv run pytest -q --tb=short --maxfail=1 --disable-warnings --no-header --no-summ
 ## Quick Start / Hello World
 
 ```python
-from pygame import Surface, Vector2, draw
-from pygae.engine import GameEngine
-from pygae.game_object import GameObject
+from pygame import Surface, draw
+from pygae import GameEngine, GameObject
+from pygae.math import Vec2
 
 @final
 class Circle(GameObject):
-    def __init__(self, position: Vector2) -> None:
+    def __init__(self, position: Vec2) -> None:
         super().__init__()
         self.position = position
         self._prev_position = position.copy()

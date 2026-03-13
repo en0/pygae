@@ -7,7 +7,6 @@ from pygame import (
     MOUSEBUTTONUP,
     MOUSEMOTION,
     MOUSEWHEEL,
-    Vector2,
 )
 from pygame.event import Event
 from pyioc3.autowire import bind
@@ -179,8 +178,8 @@ class InputService(IInputService):
         return 0
 
     @override
-    def get_vector(self, x_action: str, y_action: str) -> Vector2:
-        return Vector2(self.get_value(x_action), self.get_value(y_action))
+    def get_vector(self, x_action: str, y_action: str) -> tuple[float, float]:
+        return (self.get_value(x_action), self.get_value(y_action))
 
     @override
     def set_map(

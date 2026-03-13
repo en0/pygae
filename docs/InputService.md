@@ -28,7 +28,7 @@ The service is registered in the IOC container as a **singleton**.
 | `released(action)` | Game Logic | Returns how many times an action was released since the last fixed update. |
 | `held(action)` | Game Logic | Returns whether an action is currently held down. |
 | `get_value(action)` | Game Logic | Returns the analog value for an action (1.0 for digital held buttons, 0.0 otherwise). |
-| `get_vector(x_action, y_action)` | Game Logic | Combines two actions into a 2D `Vector2` value. |
+| `get_vector(x_action, y_action)` | Game Logic | Combines two actions into a 2D `tuple[float,float]` value. |
 | `set_map(binding_map)` | Game Logic | Replace all action-to-input bindings with a new map. |
 | `bind(action, bindings)` | Game Logic | Assign one or more bindings to a single action. |
 | `unbind(action)` | Game Logic | Remove all bindings for a specific action. |
