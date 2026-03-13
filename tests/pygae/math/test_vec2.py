@@ -1,3 +1,4 @@
+import pytest
 import math
 from pygae.math import vec2
 from pygae.math.vec2 import Vec2
@@ -99,9 +100,20 @@ def test_magnitude():
     assert v.magnitude() == 5
 
 
+def test_magnitude_of_zero_vector():
+    v = Vec2.zero()
+    assert v.magnitude() == 0
+
+
 def test_normalized():
     v = Vec2(3, 4)
     assert v.normalized() == (0.6, 0.8)
+
+
+def test_normalized_zero_vector():
+    v = Vec2.zero()
+    with pytest.raises(ZeroDivisionError):
+        _ = v.normalized()
 
 
 def test_lerp_vec2():
@@ -115,10 +127,40 @@ def test_lerp_tuple():
     assert v1.lerp((9, 12), 0.5) == (6, 8)
 
 
-def test_rotate():
-    v1 = Vec2(5, 0).rotate(math.pi * 0.5)
-    assert math.isclose(v1.x, 0.0, abs_tol=1e-9)
-    assert math.isclose(v1.y, 5.0, abs_tol=1e-9)
+def test_rotate_90_deg():
+    v = Vec2(5, 0).rotate(math.pi * 0.5)
+    assert math.isclose(v.x, 0.0, abs_tol=1e-9)
+    assert math.isclose(v.y, 5.0, abs_tol=1e-9)
+
+
+def test_rotate_zero():
+    v = Vec2(3, -4).rotate(0.0)
+    assert math.isclose(v.x, 3.0, abs_tol=1e-9)
+    assert math.isclose(v.y, -4.0, abs_tol=1e-9)
+
+
+def test_rotate_180_deg():
+    v = Vec2(2, -7).rotate(math.pi)
+    assert math.isclose(v.x, -2.0, abs_tol=1e-9)
+    assert math.isclose(v.y, 7.0, abs_tol=1e-9)
+
+
+def test_rotate_negative_angle():
+    v = Vec2(0, 3).rotate(-math.pi * 0.5)
+    assert math.isclose(v.x, 3.0, abs_tol=1e-9)
+    assert math.isclose(v.y, 0.0, abs_tol=1e-9)
+
+
+def test_rotate_full_circle():
+    v = Vec2(-2, 9).rotate(2 * math.pi)
+    assert math.isclose(v.x, -2.0, abs_tol=1e-9)
+    assert math.isclose(v.y, 9.0, abs_tol=1e-9)
+
+
+def test_rotate_zero_vector():
+    v = Vec2(0, 0).rotate(1.234)
+    assert math.isclose(v.x, 0.0, abs_tol=1e-9)
+    assert math.isclose(v.y, 0.0, abs_tol=1e-9)
 
 
 def test_reflect():
@@ -176,3 +218,13 @@ def test_snap():
 
 def test_repr():
     assert str(Vec2(3.33333, 4.33333)) == "Vec2(x=3.333, y=4.333)"
+
+
+def test_div_floor():
+    v = Vec2(4*9.4, 4*23.1)
+    assert v // 4 == (9, 23)
+
+
+def test_div():
+    v = Vec2(5*12.3, 5*45.6)
+    assert v / 5 == (12.3, 45.6)

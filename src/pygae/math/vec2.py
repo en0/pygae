@@ -17,6 +17,24 @@ class Vec2(NamedTuple):
     y: float
 
     @staticmethod
+    def zero() -> Vec2:
+        """Return a vector representing the origin.
+
+        Returns:
+            Vec2: A Vec2 instance representing the origin (0, 0).
+        """
+        return Vec2(0, 0)
+
+    @staticmethod
+    def one() -> Vec2:
+        """Return a vector representing the unit vector.
+
+        Returns:
+            Vec2: A Vec2 instance representing the unit vector (1, 1).
+        """
+        return Vec2(1, 1)
+
+    @staticmethod
     def as_vec2(o: Vec2Like) -> Vec2:
         """Convert a Vec2-like object to a Vec2 instance.
 
@@ -145,6 +163,44 @@ class Vec2(NamedTuple):
         """
         return self.__mul__(o)
 
+    def __truediv__(self, o: float) -> Vec2: # type: ignore[override]
+        """Divide by scalar value (self / o)
+
+        Args:
+            o (float): Scalar to divide with.
+
+        Returns:
+            Vec2: Resulting vector.
+        """
+        return Vec2(self.x / o, self.y / o)
+
+    def __floordiv__(self, o: int) -> Vec2: # type: ignore[override]
+        """Divide by scalar value roundinig the results down to a whole number (self // o)
+
+        Args:
+            o (float): Scalar to divide with.
+
+        Returns:
+            Vec2: Resulting vector.
+        """
+        return Vec2(self.x // o, self.y // o)
+
+    def __neg__(self) -> Vec2:  # type: ignore[override]
+        """Vector negation (-v)
+
+        Returns:
+            Vec2: A new Vec2 instance representing the negated vector.
+        """
+        return Vec2(-self.x, -self.y)
+
+    def __pos__(self) -> Vec2:  # type: ignore[override]
+        """Vector negation (-v)
+
+        Returns:
+            Vec2: A new Vec2 instance representing the negated vector.
+        """
+        return Vec2(-self.x, -self.y)
+
     def dot(self, o: Vec2Like) -> float:
         """Compute the dot product with another Vec2-like object.
 
@@ -212,7 +268,7 @@ class Vec2(NamedTuple):
         sin_a = math.sin(r)
         return Vec2(
             self.x * cos_a - self.y * sin_a,
-            self.x * sin_a + self.x * cos_a,
+            self.x * sin_a + self.y * cos_a,
         )
 
     def reflect(self, o: Vec2Like) -> Vec2:
