@@ -1,7 +1,8 @@
 from unittest.mock import Mock
 
 from pyioc3.interface import Container
-from pygae.typing import IGameObject, ISceneManager
+from pygae.core.types import IGameObject
+from pygae import ISceneManager
 
 
 def test_set_scene_allows_transition(scene_manager: ISceneManager):

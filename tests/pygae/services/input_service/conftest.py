@@ -4,8 +4,8 @@ from pygame import K_SPACE, KEYDOWN
 from pygame.event import Event
 from typing import Callable
 
-from pygae.value_object import InputBinding
-from pygae.value_object.input_binding import (
+from pygae.input import InputBinding
+from pygae.input import (
     TYPE_BUTTON,
     DEVICE_KEYBOARD,
 )

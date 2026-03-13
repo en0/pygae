@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from pygame import K_1, K_SPACE
 from pygame.event import Event
 from pygae.service.message_bus import MessageBus
-from pygae.typing import EventHandler, EventId
+from pygae.messaging import EventHandler, EventId
 
 
 def test_can_subscribe_to_event(message_bus: MessageBus):

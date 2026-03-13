@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from pygae.typing import IEventGateway, IGameObject
+from pygae.core.types import IEventGateway, IGameObject
 from fakes import SimpleGameObject
 
 

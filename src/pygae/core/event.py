@@ -1,7 +1,7 @@
 from pygame import USEREVENT, QUIT
 from pygame.event import Event
 
-from pygae.typing import IGameObject
+from pygae.core.types import IGameObject
 
 PYGAE_SCENE_SET = USEREVENT + 10_000
 PYGAE_OBJECT_ADD = USEREVENT + 20_000

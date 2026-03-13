@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
 from pygame import Surface
-from pygae.typing import IGameObject
+from pygae.core.types import IGameObject
 from fakes import SimpleGameObject
 
 

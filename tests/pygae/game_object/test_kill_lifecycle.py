@@ -1,6 +1,6 @@
 from unittest.mock import Mock
-from pygae.event import PYGAE_OBJECT_KILL
-from pygae.typing import IEventGateway, IGameObject
+from pygae.core.event import PYGAE_OBJECT_KILL
+from pygae.core.types import IEventGateway, IGameObject
 from fakes import SimpleGameObject
 
 

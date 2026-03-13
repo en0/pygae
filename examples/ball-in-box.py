@@ -4,9 +4,9 @@ from pygame.event import set_grab
 from random import random, seed
 from typing import final, override
 
-from pygae import GameEngine, GameObject, IInputService
+from pygae import GameEngine, GameObject
+from pygae.input import IInputService, InputBinding, AXIS_MOUSE_X, AXIS_MOUSE_Y, DEVICE_MOUSE, TYPE_AXIS
 from pygae.math import Vec2
-from pygae.value_object.input_binding import InputBinding, AXIS_MOUSE_X, AXIS_MOUSE_Y, DEVICE_MOUSE, TYPE_AXIS
 
 
 SCREEN_SIZE = (1280, 1024)

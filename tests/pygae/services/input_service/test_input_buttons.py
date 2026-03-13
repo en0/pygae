@@ -1,7 +1,7 @@
 from pygame import KEYDOWN, KEYUP, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from pygame.event import Event
-from pygae.typing import IInputService, IMessageBus
-from pygae.value_object.input_binding import DEVICE_MOUSE
+from pygae.input import IInputService, DEVICE_MOUSE
+from pygae.messaging import IMessageBus
 
 
 def test_pressed_buttons_for_existing_keyboard_binding(

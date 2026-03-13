@@ -8,9 +8,9 @@ from pygame.event import (
     pump as _pump_event,
 )
 
-from pygae.typing import (
+from pygae.core.types import IEventGateway
+from pygae.messaging import (
     EventHandlerFilter,
-    IEventGateway,
     IMessageBus,
     SubscriptionId,
     EventId,

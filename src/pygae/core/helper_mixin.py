@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import TypeVar
 
 from pygame import mouse
-from pygae.typing import IGameObject
-from pygae.value_object.input_binding import (
+from pygae.core.types import IGameObject, ISceneManager
+from pygae.input import (
     AXIS_MOUSE_X,
     AXIS_MOUSE_Y,
     AXIS_MOUSE_DX,
@@ -12,17 +12,16 @@ from pygae.value_object.input_binding import (
     DEVICE_MOUSE,
     TYPE_AXIS,
     TYPE_BUTTON,
+    IInputService,
+    InputBinding,
 )
 from pygame.event import Event
 from pyioc3.interface import Container
-from pygae.typing import (
+from pygae.messaging import (
     EventHandler,
     EventId,
     IMessageBus,
-    InputBinding,
     SubscriptionId,
-    IInputService,
-    ISceneManager,
 )
 
 

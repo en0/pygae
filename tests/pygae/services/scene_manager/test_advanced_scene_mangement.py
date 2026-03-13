@@ -1,6 +1,7 @@
 from unittest.mock import Mock
-from pygae.event import PYGAE_OBJECT_KILL, PYGAE_SCENE_SET, PYGAE_OBJECT_SPAWN
-from pygae.typing import IEventGateway, IGameObject, ISceneManager
+from pygae.core.event import PYGAE_OBJECT_KILL, PYGAE_SCENE_SET, PYGAE_OBJECT_SPAWN
+from pygae.core.types import IEventGateway, IGameObject
+from pygae import ISceneManager
 
 
 def test_multiple_rapid_set_scene_calls_only_activates_last(

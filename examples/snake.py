@@ -1,13 +1,12 @@
 from collections import deque
 from random import randint
 from typing import NamedTuple, final, override
-from pygae import GameEngine, GameObject, IInputService
-from pygae.math import Vec2
 from pygame import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_p, K_s, K_w, Rect, Surface, draw
 from pygame.font import SysFont
 
-from pygae.value_object import InputBinding
-from pygae.value_object.input_binding import DEVICE_KEYBOARD, TYPE_BUTTON
+from pygae import GameEngine, GameObject
+from pygae.input import IInputService, InputBinding, DEVICE_KEYBOARD, TYPE_BUTTON
+from pygae.math import Vec2
 
 
 T_FACING = Vec2

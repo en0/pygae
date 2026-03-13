@@ -1,4 +1,4 @@
-from pygae.typing import IInputService
+from pygae.input import IInputService
 
 
 def test_bind_creates_internal_mapping(input_service: IInputService, make_binding):

@@ -21,8 +21,7 @@ environment for building games, simulations, or interactive applications.
 
 ```python
 import pygame
-from pygae.engine import GameEngine
-from pygae.typing import IGameObject
+from pygae import GameEngine, GameObject
 
 class MyGame(GameEngine):
 

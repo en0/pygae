@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from pygae.typing import IGameObject
+from pygae.core.types import IGameObject
 from fakes import SimpleGameObject
 
 

@@ -9,16 +9,11 @@ from pygame.time import Clock
 from pyioc3.autowire import AutoWireContainerBuilder
 from pyioc3.interface import Container
 
-from pygae.event import make_quit_event
-from pygae.helper_mixin import HelperMixin
-from pygae.typing import (
-    EventHandler,
-    EventId,
-    IInputService,
-    IMessageBus,
-    ISceneManager,
-    SubscriptionId,
-)
+from pygae.core.event import make_quit_event
+from pygae.core.helper_mixin import HelperMixin
+from pygae.core.types import ISceneManager
+from pygae.input import IInputService
+from pygae.messaging import EventHandler, EventId, IMessageBus, SubscriptionId
 
 
 class GameEngine(HelperMixin, ABC):

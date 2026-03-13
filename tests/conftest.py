@@ -3,8 +3,10 @@ import pytest
 from pyioc3.autowire import AutoWireContainerBuilder
 from pyioc3.interface import Container
 
-from pygae.game_object import GameObject
-from pygae.typing import IEventGateway, IInputService, IMessageBus, ISceneManager
+from pygae.core.types import IEventGateway
+from pygae.input import IInputService
+from pygae.messaging import IMessageBus
+from pygae import ISceneManager
 
 from fakes import EventQueueFake
 

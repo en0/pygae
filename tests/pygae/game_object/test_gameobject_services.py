@@ -1,6 +1,6 @@
 import pytest
 
-from pygae.typing import IMessageBus
+from pygae.messaging import IMessageBus
 from fakes import SimpleGameObject
 
 

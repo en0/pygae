@@ -11,9 +11,8 @@ from pygame import (
 from pygame.event import Event
 from pyioc3.autowire import bind
 
-from pygae.typing import EventHandler, EventId, IInputService, IMessageBus
-from pygae.value_object import InputBinding
-from pygae.value_object.input_binding import (
+from pygae.input import IInputService, InputBinding
+from pygae.input.types import (
     AXES,
     AXES_REL,
     AXIS_MOUSE_DX,
@@ -27,6 +26,7 @@ from pygae.value_object.input_binding import (
     TYPE_AXIS,
     TYPE_BUTTON,
 )
+from pygae.messaging import EventHandler, EventId, IMessageBus
 
 
 @bind(IInputService, "SINGLETON", lambda c: c)

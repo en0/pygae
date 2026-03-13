@@ -7,13 +7,14 @@ from pygame.event import Event
 from pyioc3.interface import Container
 from typing import override
 
-from pygae.event import (
+from pygae.core.event import (
     make_object_add_event,
     make_object_kill_event,
     make_object_spawn_event,
 )
-from pygae.helper_mixin import HelperMixin
-from pygae.typing import EventHandler, EventId, IGameObject, IMessageBus, SubscriptionId
+from pygae.core.helper_mixin import HelperMixin
+from pygae.core.types import IGameObject
+from pygae.messaging import EventHandler, EventId, IMessageBus, SubscriptionId
 
 
 class GameObject(HelperMixin, IGameObject, ABC):

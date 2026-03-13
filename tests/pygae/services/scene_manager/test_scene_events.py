@@ -1,6 +1,7 @@
 from unittest.mock import Mock
-from pygae.typing import IGameObject, ISceneManager, IEventGateway
-from pygae.event import PYGAE_SCENE_SET, PYGAE_OBJECT_SPAWN, PYGAE_OBJECT_KILL
+from pygae.core.types import IEventGateway, IGameObject
+from pygae.core.event import PYGAE_SCENE_SET, PYGAE_OBJECT_SPAWN, PYGAE_OBJECT_KILL
+from pygae import ISceneManager
 
 
 def test_set_scene_records_events(

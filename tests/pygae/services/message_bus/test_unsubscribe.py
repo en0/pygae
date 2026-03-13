@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
 from pygae.service.message_bus import MessageBus
-from pygae.typing import EventHandler, EventId, SubscriptionId
+from pygae.messaging import EventHandler, EventId, SubscriptionId
 
 
 def test_unsubscribe_removes_subscription(

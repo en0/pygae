@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 from pygame import USEREVENT
 from pygame.event import Event
-from pygae.typing import EventHandler, IMessageBus
+from pygae.messaging import EventHandler, IMessageBus
 from fakes import SimpleGameObject
 
 

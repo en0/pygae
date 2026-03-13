@@ -1,6 +1,7 @@
 from pygame import KEYDOWN
 from pygame.event import Event
-from pygae.typing import IInputService, IMessageBus
+from pygae.input import IInputService
+from pygae.messaging import IMessageBus
 
 
 def test_can_disable_action(

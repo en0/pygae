@@ -1,8 +1,8 @@
 from typing import final, override
 from pygame.event import Event
 
-from pygae.game_object import GameObject
-from pygae.typing import IEventGateway
+from pygae.core import GameObject
+from pygae.core.types import IEventGateway
 
 
 @final

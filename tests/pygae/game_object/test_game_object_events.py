@@ -1,6 +1,6 @@
 from pygame.event import Event
-from pygae.event import PYGAE_OBJECT_ADD, PYGAE_OBJECT_KILL, PYGAE_OBJECT_SPAWN
-from pygae.typing import IEventGateway
+from pygae.core.event import PYGAE_OBJECT_ADD, PYGAE_OBJECT_KILL, PYGAE_OBJECT_SPAWN
+from pygae.core.types import IEventGateway
 from fakes import SimpleGameObject
 
 

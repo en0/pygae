@@ -1,7 +1,8 @@
 from pygame import MOUSEMOTION
 from pygame.event import Event
-from pygae.typing import IInputService, IMessageBus
-from pygae.value_object.input_binding import (
+from pygae.input import IInputService
+from pygae.messaging import IMessageBus
+from pygae.input import (
     AXIS_MOUSE_DX,
     AXIS_MOUSE_DY,
     AXIS_MOUSE_X,

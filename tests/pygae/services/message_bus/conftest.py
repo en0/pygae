@@ -4,7 +4,7 @@ from unittest.mock import Mock
 from pygame import USEREVENT
 
 from pygae.service.message_bus import MessageBus
-from pygae.typing import EventHandler, EventId
+from pygae.messaging import EventHandler, EventId
 
 
 @pytest.fixture

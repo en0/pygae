@@ -3,8 +3,9 @@ from typing import override
 from pygame import Surface
 from pyioc3.autowire import bind
 from pyioc3.interface import Container
-from pygae.typing import IGameObject, IMessageBus, ISceneManager
-from pygae import event
+from pygae.core.types import IGameObject, ISceneManager
+from pygae.core import event
+from pygae.messaging import IMessageBus
 
 
 @bind(ISceneManager, "SINGLETON", lambda e: e)
