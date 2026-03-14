@@ -16,6 +16,54 @@ class Vec2(NamedTuple):
     x: float
     y: float
 
+    @property
+    def xy(self) -> tuple[float, float]:
+        """Return a tuple of the x and y components.
+
+        Returns:
+            tuple[float, float]: The (x, y) components of the vector.
+        """
+        return (self.x, self.y)
+
+    @property
+    def xx(self) -> tuple[float, float]:
+        """Return a tuple of the x component, twice.
+
+        Returns:
+            tuple[float, float]: The (x, x) components of the vector.
+        """
+        return (self.x, self.x)
+
+    @property
+    def yx(self) -> tuple[float, float]:
+        """Return a tuple of the y and x components.
+
+        Returns:
+            tuple[float, float]: The (y, x) components of the vector.
+        """
+        return (self.y, self.x)
+
+    @property
+    def yy(self) -> tuple[float, float]:
+        """Return a tuple of the y component, twice.
+
+        Returns:
+            tuple[float, float]: The (y, y) components of the vector.
+        """
+        return (self.y, self.y)
+
+    @staticmethod
+    def from_angle(t: float) -> Vec2:
+        """Create a unit vector pointing at `t`.
+
+        Args:
+            t (float): Angle in radians.
+
+        Returns:
+            Vec2: The unit vector that points at angle `t`.
+        """
+        return Vec2(math.cos(t), math.sin(t))
+
     @staticmethod
     def zero() -> Vec2:
         """Return a vector representing the origin.
@@ -48,7 +96,7 @@ class Vec2(NamedTuple):
             return o
         else:
             x, y = o
-            return Vec2(x, y)
+            return Vec2(float(x), float(y))
 
     @staticmethod
     def _coerce(o: Vec2Like) -> tuple[float, float]:
@@ -163,7 +211,7 @@ class Vec2(NamedTuple):
         """
         return self.__mul__(o)
 
-    def __truediv__(self, o: float) -> Vec2: # type: ignore[override]
+    def __truediv__(self, o: float) -> Vec2:  # type: ignore[override]
         """Divide by scalar value (self / o)
 
         Args:
@@ -174,11 +222,11 @@ class Vec2(NamedTuple):
         """
         return Vec2(self.x / o, self.y / o)
 
-    def __floordiv__(self, o: int) -> Vec2: # type: ignore[override]
-        """Divide by scalar value roundinig the results down to a whole number (self // o)
+    def __floordiv__(self, o: int) -> Vec2:  # type: ignore[override]
+        """Divide by scalar value rounding the results down to a whole number (self // o)
 
         Args:
-            o (float): Scalar to divide with.
+            o (int): Scalar to divide with.
 
         Returns:
             Vec2: Resulting vector.
@@ -194,12 +242,60 @@ class Vec2(NamedTuple):
         return Vec2(-self.x, -self.y)
 
     def __pos__(self) -> Vec2:  # type: ignore[override]
-        """Vector negation (-v)
+        """Unary plus (identity).
 
         Returns:
-            Vec2: A new Vec2 instance representing the negated vector.
+            Vec2: self
         """
-        return Vec2(-self.x, -self.y)
+        return self
+
+    def __lt__(self, o: Vec2Like) -> bool:  # type: ignore[override]
+        """Test inequality between magnitude (self < o).
+
+        Args:
+            o (Vec2Like): A vector or vector-like object.
+
+        Returns:
+            bool: True, if this vector's magnitude is less than the given vector's magnitude
+        """
+        x, y = Vec2._coerce(o)
+        return (self.x**2 + self.y**2) < (x**2 + y**2)
+
+    def __le__(self, o: Vec2Like) -> bool:  # type: ignore[override]
+        """Test inequality between magnitude (self <= o).
+
+        Args:
+            o (Vec2Like): A vector or vector-like object.
+
+        Returns:
+            bool: True, if this vector's magnitude is less than or equal to the given vector's magnitude
+        """
+        x, y = Vec2._coerce(o)
+        return (self.x**2 + self.y**2) <= (x**2 + y**2)
+
+    def __gt__(self, o: Vec2Like) -> bool:  # type: ignore[override]
+        """Test inequality between magnitude (self > o).
+
+        Args:
+            o (Vec2Like): A vector or vector-like object.
+
+        Returns:
+            bool: True, if this vector's magnitude is greater than the given vector's magnitude
+        """
+        x, y = Vec2._coerce(o)
+        return (self.x**2 + self.y**2) > (x**2 + y**2)
+
+    def __ge__(self, o: Vec2Like) -> bool:  # type: ignore[override]
+        """Test inequality between magnitude (self >= o).
+
+        Args:
+            o (Vec2Like): A vector or vector-like object.
+
+        Returns:
+            bool: True, if this vector's magnitude is greater than or equal to the given vector's magnitude
+        """
+        x, y = Vec2._coerce(o)
+        return (self.x**2 + self.y**2) >= (x**2 + y**2)
 
     def dot(self, o: Vec2Like) -> float:
         """Compute the dot product with another Vec2-like object.
@@ -352,11 +448,20 @@ class Vec2(NamedTuple):
             math.floor(self.y / s) * s,
         )
 
-    ## TODO: angle_to(self, o: Vec2Like) -> float: # Compute the angle of self to o
-    ## TODO: clamp(self) -> Vec2: # keeps a vector within a specified magnitude.
-    ## TODO: .zero(), .one(), .from_angle(theta)
-    ## TODO: Consider __lt__, __le__, ... based on magnitude
-    ## TODO: .xx, .yy, .xy, .yx
+    def angle_to(self, o: Vec2Like) -> float:
+        """Calculate the angle between this and the given vector.
+
+        Args:
+            o (Vec2Like): A vector or vector-like object.
+
+        Returns:
+            float: The angle, in radians between this and the given vector.
+        """
+        o = self.as_vec2(o)
+        a = math.atan2(self.cross(o), self.dot(o))
+        if math.isclose(a, -math.pi):
+            a = math.pi
+        return a
 
 
 Vec2Like = Sequence[float] | Vec2

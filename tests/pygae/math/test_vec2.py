@@ -221,10 +221,127 @@ def test_repr():
 
 
 def test_div_floor():
-    v = Vec2(4*9.4, 4*23.1)
+    v = Vec2(4 * 9.4, 4 * 23.1)
     assert v // 4 == (9, 23)
 
 
 def test_div():
-    v = Vec2(5*12.3, 5*45.6)
+    v = Vec2(5 * 12.3, 5 * 45.6)
     assert v / 5 == (12.3, 45.6)
+
+
+def test_swizzles():
+    v = Vec2(2, 3)
+    assert v.xy == (2, 3)
+    assert v.yx == (3, 2)
+    assert v.xx == (2, 2)
+    assert v.yy == (3, 3)
+
+
+def test_lt():
+    assert Vec2(2, 2) < Vec2(3, 3)
+    assert Vec2(2, 0) < Vec2(3, 0)
+    assert Vec2(0, 2) < Vec2(0, 3)
+    assert Vec2(-2, -2) < Vec2(3, 3)
+    assert Vec2(2, 2) < Vec2(-3, -3)
+    assert Vec2(-2, -2) < Vec2(-3, -3)
+    assert Vec2(-2, 2) < Vec2(3, -3)
+    assert not Vec2(3, 3) < Vec2(2, 2)
+    assert not Vec2(3, 3) < Vec2(3, 3)
+
+
+def test_le():
+    assert Vec2(2, 2) <= Vec2(3, 3)
+    assert Vec2(2, 0) <= Vec2(3, 0)
+    assert Vec2(0, 2) <= Vec2(0, 3)
+    assert Vec2(-2, -2) <= Vec2(3, 3)
+    assert Vec2(2, 2) <= Vec2(-3, -3)
+    assert Vec2(-2, -2) <= Vec2(-3, -3)
+    assert Vec2(-2, 2) <= Vec2(3, -3)
+    assert not Vec2(3, 3) <= Vec2(2, 2)
+    assert Vec2(3, 3) <= Vec2(3, 3)
+
+
+def test_lt():
+    assert Vec2(3, 3) > Vec2(2, 2)
+    assert Vec2(3, 0) > Vec2(2, 0)
+    assert Vec2(0, 3) > Vec2(0, 2)
+    assert Vec2(3, 3) > Vec2(-2, -2)
+    assert Vec2(-3, -3) > Vec2(2, 2)
+    assert Vec2(-3, -3) > Vec2(-2, -2)
+    assert Vec2(3, -3) > Vec2(-2, 2)
+    assert not Vec2(2, 2) > Vec2(3, 3)
+    assert not Vec2(3, 3) > Vec2(3, 3)
+
+
+def test_le():
+    assert Vec2(3, 3) >= Vec2(2, 2)
+    assert Vec2(3, 0) >= Vec2(2, 0)
+    assert Vec2(0, 3) >= Vec2(0, 2)
+    assert Vec2(3, 3) >= Vec2(-2, -2)
+    assert Vec2(-3, -3) >= Vec2(2, 2)
+    assert Vec2(-3, -3) >= Vec2(-2, -2)
+    assert Vec2(3, -3) >= Vec2(-2, 2)
+    assert not Vec2(2, 2) >= Vec2(3, 3)
+    assert Vec2(3, 3) >= Vec2(3, 3)
+
+
+def test_to_angle():
+    # orthogonal rotations
+    assert math.isclose(Vec2(1, 0).angle_to((0, 1)), math.pi / 2)
+    assert math.isclose(Vec2(0, 1).angle_to((1, 0)), -math.pi / 2)
+
+    # identical vectors
+    assert math.isclose(Vec2(1, 0).angle_to((1, 0)), 0.0)
+    assert math.isclose(Vec2(1, 1).angle_to((1, 1)), 0.0)
+
+    # opposite vectors
+    assert math.isclose(Vec2(1, 0).angle_to((-1, 0)), math.pi)
+    assert math.isclose(Vec2(0, 1).angle_to((0, -1)), math.pi)
+
+    # 45 degree rotations
+    assert math.isclose(Vec2(1, 0).angle_to((1, 1)), math.pi / 4)
+    assert math.isclose(Vec2(1, 1).angle_to((1, 0)), -math.pi / 4)
+
+    # quadrant transitions
+    assert math.isclose(Vec2(1, 1).angle_to((-1, 1)), math.pi / 2)
+    assert math.isclose(Vec2(-1, 1).angle_to((-1, -1)), math.pi / 2)
+    assert math.isclose(Vec2(-1, -1).angle_to((1, -1)), math.pi / 2)
+    assert math.isclose(Vec2(1, -1).angle_to((1, 1)), math.pi / 2)
+
+    # arbitrary directions
+    assert math.isclose(Vec2(-1, -1).angle_to((-1, 0)), -math.pi / 4)
+    assert math.isclose(Vec2(-1, 0).angle_to((-1, -1)), math.pi / 4)
+
+    # ensure range is [-π, π]
+    assert -math.pi <= Vec2(1, 0).angle_to((-1, -0.0001)) <= math.pi
+
+
+def test_from_angle():
+    eps = 1e-7
+
+    # 0 radians → (1,0)
+    v = Vec2.from_angle(0)
+    assert math.isclose(v.x, 1.0, abs_tol=eps)
+    assert math.isclose(v.y, 0.0, abs_tol=eps)
+
+    # π/2 → (0,1)
+    v = Vec2.from_angle(math.pi / 2)
+    assert math.isclose(v.x, 0.0, abs_tol=eps)
+    assert math.isclose(v.y, 1.0, abs_tol=eps)
+
+    # π → (-1,0)
+    v = Vec2.from_angle(math.pi)
+    assert math.isclose(v.x, -1.0, abs_tol=eps)
+    assert math.isclose(v.y, 0.0, abs_tol=eps)
+
+    # -π/2 → (0,-1)
+    v = Vec2.from_angle(-math.pi / 2)
+    assert math.isclose(v.x, 0.0, abs_tol=eps)
+    assert math.isclose(v.y, -1.0, abs_tol=eps)
+
+    # 45° → (√2/2, √2/2)
+    v = Vec2.from_angle(math.pi / 4)
+    sqrt2_2 = math.sqrt(2) / 2
+    assert math.isclose(v.x, sqrt2_2, abs_tol=eps)
+    assert math.isclose(v.y, sqrt2_2, abs_tol=eps)
